@@ -9,7 +9,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: version-not-found
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f50
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05800
     - version:
         major: 4
@@ -21,7 +20,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: version-not-found
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f51
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05801
     - version:
         major: 4
@@ -33,7 +31,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: version-not-found
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f52
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05802
 edges:
     - - 0

@@ -439,6 +439,11 @@ func TestServer_generateChannelHeadGraph(t *testing.T) {
 			baseVersion: semver.MustParse("4.20.0-ec.2"),
 			arch:        "amd64",
 		},
+		{
+			name:        "generates A->B->C graph with version 4.20.0-ec.2 as a channel head",
+			baseVersion: semver.MustParse("4.20.0-ec.2"),
+			arch:        "multi",
+		},
 	}
 
 	for _, tt := range tests {
