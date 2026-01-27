@@ -9,7 +9,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4780
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05600
     - version:
         major: 4
@@ -21,7 +20,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: channel-head,risks-always,risks-matching,risks-nonmatching,simple,smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b6d
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05705
     - version:
         major: 4
@@ -33,7 +31,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4781
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05601
     - version:
         major: 4
@@ -45,7 +42,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b6e
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05706
     - version:
         major: 4
@@ -57,7 +53,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f50
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05800
     - version:
         major: 4
@@ -69,7 +64,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b6f
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05707
     - version:
         major: 4
@@ -81,7 +75,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f51
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05801
     - version:
         major: 4
@@ -93,7 +86,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b70
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05708
     - version:
         major: 4
@@ -105,7 +97,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f52
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05802
     - version:
         major: 4
@@ -117,7 +108,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b71
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05709
     - version:
         major: 4
@@ -129,7 +119,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f53
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05803
     - version:
         major: 4
@@ -141,7 +130,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b72
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05710
     - version:
         major: 4
@@ -153,7 +141,6 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f54
-        release.openshift.io/architecture: amd64
         url: https://access.redhat.com/errata/RHSA-2024:05804
 edges:
     - - 0

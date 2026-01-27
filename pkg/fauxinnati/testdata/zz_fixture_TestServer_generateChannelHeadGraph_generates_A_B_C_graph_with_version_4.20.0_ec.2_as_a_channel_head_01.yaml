@@ -9,6 +9,7 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: channel-head
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d5338
+        release.openshift.io/architecture: multi
         url: https://access.redhat.com/errata/RHSA-2024:05900
     - version:
         major: 4
@@ -20,6 +21,7 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: channel-head
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d5339
+        release.openshift.io/architecture: multi
         url: https://access.redhat.com/errata/RHSA-2024:05901
     - version:
         major: 4
@@ -37,6 +39,7 @@ nodes:
       metadata:
         io.openshift.upgrades.graph.release.channels: channel-head,risks-always,risks-matching,risks-nonmatching,simple,smoke-test
         io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d5720
+        release.openshift.io/architecture: multi
         url: https://access.redhat.com/errata/RHSA-2024:06000
 edges:
     - - 0

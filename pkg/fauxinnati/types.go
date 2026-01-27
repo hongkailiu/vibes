@@ -97,9 +97,9 @@ func NewNodeWithChannelsMetadata(version semver.Version, channelsMetadata string
 	}
 }
 
-// SetArchitecture adds architecture metadata to a node if arch is not empty
+// SetArchitecture adds architecture metadata to a node if arch is multi
 func (n *Node) SetArchitecture(arch string) {
-	if arch != "" {
+	if arch == "multi" {
 		n.Metadata["release.openshift.io/architecture"] = arch
 	}
 }
