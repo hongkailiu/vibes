@@ -72,6 +72,8 @@ func (s *Server) handleGraph(w http.ResponseWriter, r *http.Request) {
 		graph = s.generateRisksMatchingGraph(parsedVersion, arch, channel)
 	case "risks-nonmatching":
 		graph = s.generateRisksNonmatchingGraph(parsedVersion, arch, channel)
+	case "risks-cannot-evaluate":
+		graph = s.generateRisksCannotEvaluateGraph(parsedVersion, arch, channel)
 	case "smoke-test":
 		graph = s.generateSmokeTestGraph(parsedVersion, arch, channel)
 	default:
@@ -286,6 +288,67 @@ func (s *Server) generateRisksMatchingGraph(queriedVersion semver.Version, arch 
 							Type: "PromQL",
 							PromQL: &PromQLQuery{
 								PromQL: "vector(1)",
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	return Graph{
+		Nodes:            []Node{nodeA, nodeB, nodeC},
+		Edges:            []Edge{}, // No unconditional edges, only conditional
+		ConditionalEdges: conditionalEdges,
+	}
+}
+
+func (s *Server) generateRisksCannotEvaluateGraph(queriedVersion semver.Version, arch string, channel string) Graph {
+	// A is the queried version
+	versionA := queriedVersion
+
+	// B: Same minor, patch bumped by one, drop prerelease
+	versionB := queriedVersion
+	versionB.Patch++
+	versionB.Pre = nil
+
+	// C: Minor bumped by one, patch set to zero, drop prerelease
+	versionC := queriedVersion
+	versionC.Minor++
+	versionC.Patch = 0
+	versionC.Pre = nil
+
+	nodeA := NewNodeWithChannelsMetadata(versionA, s.formatChannelsForMetadata(versionA))
+	nodeB := NewNode(versionB, channel)
+	nodeC := NewNode(versionC, channel)
+
+	nodeA.SetArchitecture(arch)
+	nodeB.SetArchitecture(arch)
+	nodeC.SetArchitecture(arch)
+
+	// Create conditional edges with SyntheticRisk using PromQL that always evaluates to 1
+	conditionalEdges := []ConditionalEdge{
+		{
+			Edges: []ConditionalUpdate{
+				{
+					From: versionA.String(),
+					To:   versionB.String(),
+				},
+				{
+					From: versionA.String(),
+					To:   versionC.String(),
+				},
+			},
+			Risks: []ConditionalUpdateRisk{
+				{
+					URL:     "https://docs.openshift.com/synthetic-risk-promql",
+					Name:    "SyntheticRisk",
+					Message: "This is a synthetic risk with PromQL that cannot be evaluated in OpenShift clusters",
+					MatchingRules: []MatchingRule{
+						{
+							Type: "PromQL",
+							PromQL: &PromQLQuery{
+								PromQL: "this will fail; muahaha",
 							},
 						},
 					},
@@ -618,6 +681,19 @@ func (s *Server) generateSmokeTestGraph(queriedVersion semver.Version, arch stri
 						},
 					},
 				},
+				{
+					URL:     "https://docs.openshift.com/synthetic-risk-smoke-combined-d",
+					Name:    "RiskDCannotEvaluate",
+					Message: "This is RiskDCannotEvaluate part of combined risks for smoke testing",
+					MatchingRules: []MatchingRule{
+						{
+							Type: "PromQL",
+							PromQL: &PromQLQuery{
+								PromQL: "this will fail; muahaha",
+							},
+						},
+					},
+				},
 			},
 		},
 	}
@@ -674,7 +750,7 @@ func (s *Server) generateRootHTML(host string) string {
 	exampleVersion := "4.18.42"
 
 	// Generate live examples for each channel
-	channelNames := []string{"version-not-found", "channel-head", "simple", "risks-always", "risks-matching", "risks-nonmatching", "smoke-test"}
+	channelNames := []string{"version-not-found", "channel-head", "simple", "risks-always", "risks-matching", "risks-nonmatching", "risks-cannot-evaluate", "smoke-test"}
 	channelDescriptions := []string{
 		"Three-node graph excluding the requested version. Creates a forward progression path.",
 		"Three-node graph where the client's version is the head. Shows upgrade history.",
@@ -682,6 +758,7 @@ func (s *Server) generateRootHTML(host string) string {
 		"Three-node graph with conditional edges that always block updates (Always matching rule).",
 		"Three-node graph with PromQL conditional edges that match (PromQL: vector(1)).",
 		"Three-node graph with PromQL conditional edges that don't match (PromQL: vector(0)).",
+		"Three-node graph with PromQL conditional edges that cannot be evaluated (PromQL: this will fail; muahaha).",
 		"Comprehensive 13-node graph with mixed conditional edges for testing all Cincinnati features.",
 	}
 

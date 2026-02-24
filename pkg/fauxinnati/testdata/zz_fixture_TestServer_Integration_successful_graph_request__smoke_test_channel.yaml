@@ -262,6 +262,19 @@
               }
             }
           ]
+        },
+        {
+          "url": "https://docs.openshift.com/synthetic-risk-smoke-combined-d",
+          "name": "RiskDCannotEvaluate",
+          "message": "This is RiskDCannotEvaluate part of combined risks for smoke testing",
+          "matchingRules": [
+            {
+              "type": "PromQL",
+              "promql": {
+                "promql": "this will fail; muahaha"
+              }
+            }
+          ]
         }
       ]
     }
