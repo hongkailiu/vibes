@@ -337,11 +337,11 @@ func TestServer_handleGraph(t *testing.T) {
 					"4.17.7(RiskA:Always)",
 					"4.17.8(RiskBMatches:PromQL)",
 					"4.17.9(RiskCNoMatch:PromQL)",
-					"4.17.10(RiskA:Always|RiskBMatches:PromQL|RiskCNoMatch:PromQL)",
+					"4.17.10(RiskA:Always|RiskBMatches:PromQL|RiskCNoMatch:PromQL|RiskDCannotEvaluate:PromQL)",
 					"4.18.1(RiskA:Always)",
 					"4.18.2(RiskBMatches:PromQL)",
 					"4.18.3(RiskCNoMatch:PromQL)",
-					"4.18.4(RiskA:Always|RiskBMatches:PromQL|RiskCNoMatch:PromQL)",
+					"4.18.4(RiskA:Always|RiskBMatches:PromQL|RiskCNoMatch:PromQL|RiskDCannotEvaluate:PromQL)",
 				}
 				// the test sorts the output to make the test deterministic, but it is not smart to handle semvers
 				sort.Strings(conditionals)
@@ -511,6 +511,28 @@ func TestServer_generateRisksMatchingGraph(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			server := NewServer()
 			result := server.generateRisksMatchingGraph(tt.baseVersion, tt.arch, "risks-matching")
+			testhelper.CompareWithFixture(t, result)
+		})
+	}
+}
+
+func TestServer_generateRisksCannotEvaluateGraph(t *testing.T) {
+	tests := []struct {
+		name        string
+		baseVersion semver.Version
+		arch        string
+	}{
+		{
+			name:        "generates A->B->C graph with version 4.17.5 having two conditional risk edges with promql matching rules",
+			baseVersion: semver.MustParse("4.17.5"),
+			arch:        "amd64",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := NewServer()
+			result := server.generateRisksCannotEvaluateGraph(tt.baseVersion, tt.arch, "risks-cannot-evaluate")
 			testhelper.CompareWithFixture(t, result)
 		})
 	}

@@ -181,6 +181,14 @@ Complete DAG structure (tree-like):
     </div>
     
     <div class="channel">
+        <h3>risks-cannot-evaluate</h3>
+        <p>Three-node graph with PromQL conditional edges that cannot be evaluated (PromQL: this will fail; muahaha).</p>
+        <div class="example">Unknown channel</div>
+        <p><strong>Try it:</strong> <code>curl &#34;https://https://LOCALHOST:PORT/api/upgrades_info/graph?channel=risks-cannot-evaluate&amp;version=4.18.42&amp;arch=amd64&#34;</code> 
+        <button class="copy-button" onclick="copyToClipboard('curl \u0022https:\/\/https://LOCALHOST:PORT\/api\/upgrades_info\/graph?channel=risks-cannot-evaluate\u0026version=4.18.42\u0026arch=amd64\u0022')">Copy</button></p>
+    </div>
+    
+    <div class="channel">
         <h3>smoke-test</h3>
         <p>Comprehensive 13-node graph with mixed conditional edges for testing all Cincinnati features.</p>
         <div class="example">Nodes:
@@ -211,8 +219,8 @@ Conditional Edges:
   <strong>4.18.42</strong> ⇢ 4.19.2 [RiskBMatches: PromQL]
   <strong>4.18.42</strong> ⇢ 4.18.9 [RiskCNoMatch: PromQL]
   <strong>4.18.42</strong> ⇢ 4.19.3 [RiskCNoMatch: PromQL]
-  <strong>4.18.42</strong> ⇢ 4.18.10 [RiskA: Always, RiskBMatches: PromQL, RiskCNoMatch: PromQL]
-  <strong>4.18.42</strong> ⇢ 4.19.4 [RiskA: Always, RiskBMatches: PromQL, RiskCNoMatch: PromQL]
+  <strong>4.18.42</strong> ⇢ 4.18.10 [RiskA: Always, RiskBMatches: PromQL, RiskCNoMatch: PromQL, RiskDCannotEvaluate: PromQL]
+  <strong>4.18.42</strong> ⇢ 4.19.4 [RiskA: Always, RiskBMatches: PromQL, RiskCNoMatch: PromQL, RiskDCannotEvaluate: PromQL]
 
 Graph Visualization:
 Complete DAG structure (tree-like):
@@ -227,8 +235,8 @@ Complete DAG structure (tree-like):
 │   ├⇢ [RiskBMatches:PromQL] 4.19.2
 │   ├⇢ [RiskCNoMatch:PromQL] 4.18.9
 │   ├⇢ [RiskCNoMatch:PromQL] 4.19.3
-│   ├⇢ [RiskA:Always,RiskBMatches:PromQL,RiskCNoMatch:PromQL] 4.18.10
-│   └⇢ [RiskA:Always,RiskBMatches:PromQL,RiskCNoMatch:PromQL] 4.19.4
+│   ├⇢ [RiskA:Always,RiskBMatches:PromQL,RiskCNoMatch:PromQL,RiskDCannotEvaluate:PromQL] 4.18.10
+│   └⇢ [RiskA:Always,RiskBMatches:PromQL,RiskCNoMatch:PromQL,RiskDCannotEvaluate:PromQL] 4.19.4
 └── 4.17.1
 </div>
         <p><strong>Try it:</strong> <code>curl &#34;https://https://LOCALHOST:PORT/api/upgrades_info/graph?channel=smoke-test&amp;version=4.18.42&amp;arch=amd64&#34;</code> 

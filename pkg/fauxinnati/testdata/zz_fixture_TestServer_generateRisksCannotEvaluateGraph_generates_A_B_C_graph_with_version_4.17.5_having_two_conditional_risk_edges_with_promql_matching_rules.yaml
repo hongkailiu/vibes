@@ -1,0 +1,49 @@
+nodes:
+    - version:
+        major: 4
+        minor: 17
+        patch: 5
+        pre: []
+        build: []
+      image: quay.io/openshift-release-dev/ocp-release@sha256:00000000000000000000000000000000000000000000000000000000003d4b6d
+      metadata:
+        io.openshift.upgrades.graph.release.channels: channel-head,risks-always,risks-matching,risks-nonmatching,simple,smoke-test
+        io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b6d
+        url: https://access.redhat.com/errata/RHSA-2024:05705
+    - version:
+        major: 4
+        minor: 17
+        patch: 6
+        pre: []
+        build: []
+      image: quay.io/openshift-release-dev/ocp-release@sha256:00000000000000000000000000000000000000000000000000000000003d4b6e
+      metadata:
+        io.openshift.upgrades.graph.release.channels: risks-cannot-evaluate
+        io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4b6e
+        url: https://access.redhat.com/errata/RHSA-2024:05706
+    - version:
+        major: 4
+        minor: 18
+        patch: 0
+        pre: []
+        build: []
+      image: quay.io/openshift-release-dev/ocp-release@sha256:00000000000000000000000000000000000000000000000000000000003d4f50
+      metadata:
+        io.openshift.upgrades.graph.release.channels: risks-cannot-evaluate
+        io.openshift.upgrades.graph.release.manifestref: sha256:00000000000000000000000000000000000000000000000000000000003d4f50
+        url: https://access.redhat.com/errata/RHSA-2024:05800
+edges: []
+conditionaledges:
+    - edges:
+        - from: 4.17.5
+          to: 4.17.6
+        - from: 4.17.5
+          to: 4.18.0
+      risks:
+        - url: https://docs.openshift.com/synthetic-risk-promql
+          name: SyntheticRisk
+          message: This is a synthetic risk with PromQL that cannot be evaluated in OpenShift clusters
+          matchingrules:
+            - type: PromQL
+              promql:
+                promql: this will fail; muahaha
