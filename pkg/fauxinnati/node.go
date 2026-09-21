@@ -33,8 +33,12 @@ func latestPatchVersion(client Client, queriedVersion, version semver.Version, g
 	} else if latest.LTE(queriedVersion) {
 		logrus.WithField("queriedVersion", queriedVersion).WithField("latest", latest).Warning("The latest version is not greater than the queried version")
 	} else if latest.LE(version) {
-		logrus.WithField("version", version).WithField("latest", latest).Debug("Use the latest patch version")
-		return latest
+		if latest.Major < version.Major || latest.Minor < version.Minor {
+			logrus.WithField("version", version).WithField("queriedVersion", queriedVersion).WithField("latest", latest).Warning("The latest version in the candidate channel belongs to an older minor than the required version")
+		} else {
+			logrus.WithField("version", version).WithField("latest", latest).Debug("Use the latest patch version")
+			return latest
+		}
 	}
 	return version
 }
