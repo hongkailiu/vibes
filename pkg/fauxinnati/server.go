@@ -25,7 +25,6 @@ type Server struct {
 	mux              *http.ServeMux
 	digestResolver   DigestResolver
 	candidatesGetter *candidatesGetter
-	candidates       func(client Client, major, minor uint64) ([]semver.Version, error)
 	client           Client
 }
 
