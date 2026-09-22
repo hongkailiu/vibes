@@ -26,25 +26,36 @@ type DigestResolver interface {
 	getRepository() string
 }
 
-func latestPatchVersion(client Client, queriedVersion, version semver.Version, getLatest func(client Client, major, minor uint64) (semver.Version, error)) semver.Version {
+// resolvePatchVersion replaces a synthesized version with a real released one where it can, so
+// that generated graphs point at payloads that actually exist. It looks up the head of the
+// candidate channel for version's major.minor and returns it only when all of the following
+// hold:
+//
+//   - the lookup succeeded;
+//   - the head does not belong to an older major or minor than version;
+//   - the head is newer than queriedVersion, so the graph never offers an update to a version
+//     the cluster is already at or past;
+//   - the head is not newer than version, so it stays within the topology the caller laid out.
+//
+// In every other case version is returned unchanged, and the first condition to fail decides
+// which warning is logged.
+func resolvePatchVersion(client Client, queriedVersion, version semver.Version, getLatest func(client Client, major, minor uint64) (semver.Version, error)) semver.Version {
 	latest, err := getLatest(client, version.Major, version.Minor)
 	if err != nil {
 		logrus.WithError(err).WithField("version", version).WithField("major.minor", fmt.Sprintf("%d.%d", version.Minor, version.Minor)).Warning("Fail to find the latest version")
+	} else if latest.Major < version.Major || latest.Minor < version.Minor {
+		logrus.WithField("version", version).WithField("queriedVersion", queriedVersion).WithField("latest", latest).Warning("The latest version in the candidate channel belongs to an older minor than the required version")
 	} else if latest.LTE(queriedVersion) {
 		logrus.WithField("queriedVersion", queriedVersion).WithField("latest", latest).Warning("The latest version is not greater than the queried version")
 	} else if latest.LE(version) {
-		if latest.Major < version.Major || latest.Minor < version.Minor {
-			logrus.WithField("version", version).WithField("queriedVersion", queriedVersion).WithField("latest", latest).Warning("The latest version in the candidate channel belongs to an older minor than the required version")
-		} else {
-			logrus.WithField("version", version).WithField("latest", latest).Debug("Use the latest patch version")
-			return latest
-		}
+		logrus.WithField("version", version).WithField("latest", latest).Debug("Use the latest patch version")
+		return latest
 	}
 	return version
 }
 
 func (b *NodeBuilder) Build() Node {
-	version := latestPatchVersion(b.client, b.queriedVersion, b.version, b.getLatest)
+	version := resolvePatchVersion(b.client, b.queriedVersion, b.version, b.getLatest)
 	suffix := b.architecture
 	switch b.architecture {
 	case "":
