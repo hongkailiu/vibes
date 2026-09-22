@@ -25,7 +25,6 @@ type Server struct {
 	mux              *http.ServeMux
 	digestResolver   DigestResolver
 	candidatesGetter *candidatesGetter
-	candidates       func(client Client, major, minor uint64) ([]semver.Version, error)
 	client           Client
 }
 
@@ -122,10 +121,6 @@ func (s *Server) handleGraph(w http.ResponseWriter, r *http.Request) {
 		graph = s.generateRisksCannotEvaluateGraph(parsedVersion, arch, channel)
 	case "smoke-test":
 		graph = s.generateSmokeTestGraph(parsedVersion, arch, channel)
-	case "OCP-88175":
-		graph = s.generateOCP88175Graph(parsedVersion, arch, channel, false)
-	case "OCP-88175-PromQL":
-		graph = s.generateOCP88175Graph(parsedVersion, arch, channel, true)
 	case "OTA-1813":
 		graph = s.generateOTA1813Graph(parsedVersion, arch, channel)
 	default:
@@ -1403,103 +1398,6 @@ func (h *healthResponseRecorder) Write([]byte) (int, error) {
 
 func (h *healthResponseRecorder) WriteHeader(statusCode int) {
 	h.statusCode = statusCode
-}
-
-func (s *Server) generateOCP88175Graph(queriedVersion semver.Version, arch string, channel string, promQL bool) Graph {
-	versions, err := s.candidatesGetter.candidates(s.client, queriedVersion.Major, queriedVersion.Minor)
-	if err != nil {
-		logrus.WithError(err).Warning("Failed to get candidate")
-		return s.generateEmptyGraph(fmt.Sprintf("failed to get candidates for %s", queriedVersion.String()))
-	}
-	if l := len(versions); l < 4 {
-		logrus.WithField("queriedVersion", queriedVersion.String()).Warning("Failed to get 4 candidates")
-		return s.generateEmptyGraph(fmt.Sprintf("failed to find enough (4) candidates for %s: %d", queriedVersion.String(), l))
-	}
-	latest4 := versions[len(versions)-4]
-	if latest4.LTE(queriedVersion) {
-		logrus.WithField("latest4", latest4.String()).WithField("queriedVersion", queriedVersion.String()).Warning("Failed to get 4 update paths")
-		return s.generateEmptyGraph(fmt.Sprintf("failed to find enough (4) update paths for %s", queriedVersion.String()))
-	}
-
-	nodeA := NewNodeWithNodeBuilder(s.digestResolver, s.candidatesGetter.latestCandidate, s.client, queriedVersion, queriedVersion, []string{channel}, arch)
-	nodeB := NewNodeWithNodeBuilder(s.digestResolver, s.candidatesGetter.latestCandidate, s.client, queriedVersion, versions[len(versions)-4], []string{channel}, arch)
-	nodeC := NewNodeWithNodeBuilder(s.digestResolver, s.candidatesGetter.latestCandidate, s.client, queriedVersion, versions[len(versions)-3], []string{channel}, arch)
-	nodeD := NewNodeWithNodeBuilder(s.digestResolver, s.candidatesGetter.latestCandidate, s.client, queriedVersion, versions[len(versions)-2], []string{channel}, arch)
-	nodeE := NewNodeWithNodeBuilder(s.digestResolver, s.candidatesGetter.latestCandidate, s.client, queriedVersion, versions[len(versions)-1], []string{channel}, arch)
-
-	rule := MatchingRule{Type: "Always"}
-	if promQL {
-		rule = MatchingRule{
-			Type: "PromQL",
-			PromQL: &PromQLQuery{
-				PromQL: "vector(1)",
-			},
-		}
-	}
-
-	// Create conditional edges with SyntheticRisk that applies always
-	conditionalEdges := []ConditionalEdge{
-		{
-			Edges: []ConditionalUpdate{
-				{
-					From: nodeA.Version.String(),
-					To:   nodeC.Version.String(),
-				},
-			},
-			Risks: []ConditionalUpdateRisk{
-				{
-					URL:           "https://docs.openshift.com/synthetic-risk-a",
-					Name:          "SomeInvokerThing",
-					Message:       "This is SomeInvokerThing that always applies for testing purposes",
-					MatchingRules: []MatchingRule{rule},
-				},
-			},
-		},
-		{
-			Edges: []ConditionalUpdate{
-				{
-					From: nodeA.Version.String(),
-					To:   nodeD.Version.String(),
-				},
-			},
-			Risks: []ConditionalUpdateRisk{
-				{
-					URL:           "https://docs.openshift.com/synthetic-risk-a",
-					Name:          "SomeInvokerThing",
-					Message:       "This is SomeInvokerThing that always applies for testing purposes",
-					MatchingRules: []MatchingRule{rule},
-				},
-				{
-					URL:           "https://docs.openshift.com/synthetic-risk-b",
-					Name:          "SomeChannelThing",
-					Message:       "This is SomeChannelThing that always applies for testing purposes",
-					MatchingRules: []MatchingRule{rule},
-				},
-			},
-		},
-		{
-			Edges: []ConditionalUpdate{
-				{
-					From: nodeA.Version.String(),
-					To:   nodeE.Version.String(),
-				},
-			},
-			Risks: []ConditionalUpdateRisk{
-				{
-					URL:           "https://docs.openshift.com/synthetic-risk-b",
-					Name:          "SomeInfrastructureThing",
-					Message:       "This is SomeInfrastructureThing that always applies for testing purposes",
-					MatchingRules: []MatchingRule{rule},
-				},
-			},
-		},
-	}
-
-	return Graph{
-		Nodes:            []Node{nodeA, nodeB, nodeC, nodeD, nodeE},
-		Edges:            []Edge{{0, 1}},
-		ConditionalEdges: conditionalEdges,
-	}
 }
 
 func (s *Server) generateOTA1813Graph(queriedVersion semver.Version, arch string, channel string) Graph {
